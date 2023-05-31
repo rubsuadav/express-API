@@ -1,4 +1,5 @@
 import { pool } from "../db.js";
+import { validateData, validateUniquesDatas } from "../validators/validator.js";
 
 export const getEmployeers = async (req, res) => {
   try {
@@ -27,6 +28,17 @@ export const getEmployeerById = async (req, res) => {
 
 export const createEmployeers = async (req, res) => {
   const { username, password, email } = req.body;
+  const validationErrors = validateData({ username, password, email });
+  const uniqueErrors = await validateUniquesDatas({ username, email });
+
+  if (uniqueErrors.length > 0) {
+    return res.status(409).json({ errors: uniqueErrors });
+  }
+
+  if (validationErrors.length > 0) {
+    return res.status(409).json({ errors: validationErrors });
+  }
+
   try {
     const [result] = await pool.query(
       "INSERT INTO users (username, password, email) VALUES (?, ?, ?)",
@@ -41,6 +53,17 @@ export const createEmployeers = async (req, res) => {
 export const updateEmployeers = async (req, res) => {
   const { id } = req.params;
   const { username, password, email } = req.body;
+  const validationErrors = validateData({ username, password, email });
+  const uniqueErrors = await validateUniquesDatas({ username, email });
+
+  if (uniqueErrors.length > 0) {
+    return res.status(409).json({ errors: uniqueErrors });
+  }
+
+  if (validationErrors.length > 0) {
+    return res.status(409).json({ errors: validationErrors });
+  }
+
   try {
     const [result] = await pool.query(
       "UPDATE users SET username = ?, password = ?, email = ? WHERE id = ?",
