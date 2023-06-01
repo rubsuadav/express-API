@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
     return {
       path: route.path,
       methods: route.methods,
-      };
+    };
   });
   res.json({ routes });
 });
