@@ -1,5 +1,6 @@
 import express from "express";
 import morgan from "morgan";
+import cors from "cors";
 import employeersRoutes from "./routes/employeers.routes.js";
 import listEndpoints from "express-list-endpoints";
 import "./config.js";
@@ -8,6 +9,7 @@ const app = express();
 
 app.use(morgan("dev"));
 app.use(express.json());
+app.use(cors());
 
 app.use("/api", employeersRoutes);
 
