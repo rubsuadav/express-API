@@ -7,6 +7,7 @@ import "./config.js";
 
 const app = express();
 
+app.use(express.static("./public"));
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cors());
@@ -21,7 +22,37 @@ app.get("/", (req, res) => {
       methods: route.methods,
     };
   });
-  res.json({ routes });
+  const html = `
+    <html>
+      <head>
+        <link rel="stylesheet" href="styles.css">
+      </head>
+      <body>
+        <h1>Endpoints Disponibles</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>Rutas</th>
+              <th>Metodos</th>
+            </tr>
+          </thead>
+          <tbody>
+        ${routes
+          .map(
+            (route) => `
+              <tr>
+                <td>${route.path}</td>
+                <td>${route.methods.join(", ")}</td>
+              </tr>
+            `
+          )
+          .join("")}
+          </tbody>
+        </table>
+      </body>
+    </html>
+  `;
+  res.send(html);
 });
 
 app.use((req, res) => {
